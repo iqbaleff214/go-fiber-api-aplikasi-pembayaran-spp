@@ -1,0 +1,549 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Aplikasi Pembayaran SPP",
+    "description": "API Spec for Aplikasi Pembayaran SPP RESTful API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api"
+    }
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "to authenticate user credential and retrieve token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "iqbaleff214"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "admin"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "successfully logged in"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user_id": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "M. Iqbal Effendi"
+                        },
+                        "username": {
+                          "type": "string",
+                          "example": "iqbaleff214"
+                        },
+                        "role": {
+                          "type": "string",
+                          "example": "administrator"
+                        },
+                        "token": {
+                          "type": "string",
+                          "description": "JWT token",
+                          "example": "1C5CHFA_enID1034ID10341C5CHFA_enID1034ID1034"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Username or password is empty",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "username is mandatory"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Password incorrect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "incorrect password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User with such username doesn't exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "user not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to generate authorization token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "unable to generate token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/grades": {
+      "get": {
+        "tags": [
+          "Grades"
+        ],
+        "summary": "List all grades",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "List all grades",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "page cursor",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20,
+              "example": 10
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "XII"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get all grades",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "successfully fetch grades list"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer",
+                          "example": 100
+                        },
+                        "total_page": {
+                          "type": "integer",
+                          "example": 10
+                        },
+                        "current_page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Grade"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Grades"],
+        "summary": "Create new grade",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Create new grade",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "grade_name": {
+                    "type": "string",
+                    "example": "XII RPL 2"
+                  },
+                  "skill_competency": {
+                    "type": "string",
+                    "example": "Software Engineering"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success create grade",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "successfully store grade"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Grade"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/grades/{id}": {
+      "get": {
+        "tags": ["Grades"],
+        "summary": "Get grade by id",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Get grade by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Grade id",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get grade",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "successfully fetch grade"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Grade"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Grades"],
+        "summary": "Update grade by id",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Update grade by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Grade id",
+            "example": 1
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "grade_name": {
+                    "type": "string",
+                    "example": "XII RPL 2"
+                  },
+                  "skill_competency": {
+                    "type": "string",
+                    "example": "Software Engineering"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success update grade",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "successfully update grade"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Grade"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Grades"],
+        "summary": "Delete grade by id",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Delete grade by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Grade id",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success delete grade"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Student": {
+        "type": "object",
+        "properties": {
+          "nisn": {
+            "type": "string",
+            "example": "0123456789"
+          },
+          "nis": {
+            "type": "string",
+            "example": "01234567"
+          },
+          "name": {
+            "type": "string",
+            "example": "M Iqbal Effendi"
+          },
+          "address": {
+            "type": "string",
+            "example": "Banjarmasin, Kalimantan Selatan"
+          },
+          "phone": {
+            "type": "string",
+            "example": "082182182182"
+          },
+          "grade": {
+            "$ref": "#/components/schemas/Grade"
+          },
+          "school_fee": {
+            "$ref": "#/components/schemas/SchoolFee"
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2023-03-06T01:38:30Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2023-03-06T01:38:30Z"
+          }
+        }
+      },
+      "Grade": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 21
+          },
+          "grade_name": {
+            "type": "string",
+            "example": "XII RPL 2"
+          },
+          "skill_competency": {
+            "type": "string",
+            "example": "Software Engineering"
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2023-03-06T01:38:30Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2023-03-06T01:38:30Z"
+          }
+        }
+      },
+      "SchoolFee": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 16
+          },
+          "year": {
+            "type": "integer",
+            "example": 2018
+          },
+          "nominal": {
+            "type": "integer",
+            "example": 20000
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2023-03-06T01:38:30Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2023-03-06T01:38:30Z"
+          }
+        }
+      }
+    }
+  }
+}
