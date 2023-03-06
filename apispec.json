@@ -167,6 +167,143 @@
         }
       }
     },
+    "/students": {
+      "get": {
+        "tags": [
+          "Students"
+        ],
+        "summary": "List all students",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "List all students",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "page cursor",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20,
+              "example": 10
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "M Iqbal Effendi"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get all students",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "successfully fetch students list"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer",
+                          "example": 100
+                        },
+                        "total_page": {
+                          "type": "integer",
+                          "example": 10
+                        },
+                        "current_page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Student"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/students/{nisn}": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "Get student by NISN",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Get student by NISN",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "nisn",
+            "description": "NISN",
+            "example": "0123456789"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get student",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "successfully fetch student"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Student"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/grades": {
       "get": {
         "tags": [
